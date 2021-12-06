@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <title>Interactive White Board</title>
+</head>
+
+<body>
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <div class="row">
+
+                <div class="col-md-12 text-center"> <img class="bg" src="static/icons/bg2.png" alt="hello">
+                    <input id="agree" class="m-2" type="Image" name="share screen" src="/static/icons/start_draw.png" width="30%">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 text-center ">
+        <div class="hover_bkgr_fricc">
+
+            <div>
+                <div class="popupCloseButton" id="popupCloseButton">&times;</div>
+                <p>1. I understand that the researchers have developed an application that will allow (Teachers) to draw using their index fingers and cameras. </p>
+                <p>2. The application will use their fingers as a medium in order to write, the blackboard will be the Camera's perspective (mirrored) and the drawings will be visible in real time.</p>
+                <p>3. I understand that it is recommended to use plain backgrounds and a camera with a resolution of 3 Mega Pixels (MP). </p>
+                <p>4. I understand that fast movements will make detection difficult making randomly dashed lines. </p>
+                <p>5. I understand that the application's full capacity is only supported in Desktop Computers or laptops and will not work fully as intended in mobile devices. </p>
+                <p>6. I understand that the data gathered here will only be used for the sole purpose of this project ONLY and will not be used in any other application under any circumstances. </p>
+                <p style="justify-content: center; text-align: center;"> <input type="checkbox" id="terms"> I agree with terms and condition</p>
+                <p for="username" style="font-size: 100%; "> Full Name: <input type="text" name=”username” id="username" style="width: 60%; border-radius: 4px;" disabled> </p>
+                <button id="join" style="width: 60%;background-color: lightcyan;border-radius: 4px;" disabled>Join Call</button>
+            </div>
+        </div>
+    </div>
+    <div class="TopMenu" style="min-height: 6%;">
+        <input type="Image" title="Interactive Whiteboard" name="logo" src="/static/icons/logo.png" width="5.5%" style="position: absolute;top: 5px;left: 1%;">
+
+        <div style="position: absolute; right: 1% ;top: 5px; ">
+            <label class="participantCount" id="count">Disconnected.</label>
+            <button id="leave" class="leave">Leave Call</button>
+        </div>
+
+
+    </div>
+
+    <div class="BottomMenu">
+        <div class="row m-1">
+            <div class="col-md-4 text-center">
+                <div id="hide_show" style=" display:none;font-size:  90%;"><label for="colors">Color:</label>
+
+                    <select id="colors" name="colorlist" style="font-size: 80%;border-radius: 4px;">
+                    <option value="black">black</option>
+                    <option value="red">red</option>
+                    <option value="blue">blue</option>
+                    <option value="green">green</option>
+                    <option value="yellow">yellow</option>
+                    </select>
+
+                    <button id="current_color" style="background-color: black;font-size: 65%; border-radius: 4px;" disabled>.</button>
+
+                    <video autoplay="true" id="input_video" controls style="display:none"></video>
+                    <label for="VideoInput" style=" font-size: 90%;">Video Input :</label>
+                    <select name="VideoSelect" id="VideoSelect" style="font-size: 90%; width: 27%;"></select>
+
+                    <button id="bg" style="font-size:  80%;border-radius: 4px;">Background</button>
+                    <button id="clear" style="font-size:80%;border-radius: 4px;">Clear Screen</button><br>
+                    <label for="size" style="font-size:  90%;">brush size: </label>
+                    <input type="range" min="1" max="10" value="5" class="slider" id="PaintSizze" style="width:  20%;">
+
+                </div>
+            </div>
+            <div class="col-md-4 text-center ">
+                <input id="share_screen" title="share screen" type="Image" name="share screen" src="/static/icons/x_sharescreen.png" width="55">
+                <input id="AudioControl" title="mute" type="Image" name="camera" src="/static/icons/mic.png" width="55">
+                <input id="OnOff" title="turn on camera" type="Image" name="mic" src="/static/icons/x_camera.png" width="55">
+                <label style="font-size: 100%; width: 1%"></label>
+
+
+
+                <input id="toggle_participants" title="hide participants" type="Image" name="participants" src="/static/icons/participants.png" width="40">
+                <input id="toggle_chat" title="show chat" type="Image" name="chat" src="/static/icons/x_chat.png" width="40">
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="recordcontainer">
+                    <button class="attendance" id="attendance">Attendance</button>
+                    <button type="button" class="btn btn-danger" id="stop" disabled>Stop</button>
+                    <button type="button" onclick="recordScreen()" class="btn btn-info" id="record">Record Screen</button>
+                    <span><a id="download"class="download" style="display: none; "><button type="button" style="font-size: 75%;border-radius: 7px;top: 5%;"> Download</button></a></span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div id="root" class="root">
+
+        <div id="container" class="container">
+            <div id="local" class="participant">
+                <div></div>
+                <div class="label" style="color: white; background-color: #3A3D47; border-radius: 10px; border: 5px solid white; text-align: center;">Me</div>
+            </div>
+            <!-- more participants will be added dynamically here -->
+        </div>
+    </div>
+    <div id="chat" class="chat">
+        <div id="chat-scroll">
+            <div id="chat-content">
+                <!-- chat content will be added dynamically here -->
+            </div>
+        </div>
+        <input id="chat-input" type="text" style="width: 90%;height: 20px;">
+    </div>
+    <div class="MainScreen" id="MainScreen">
+        <canvas class="canvas1" width="700px" height="500px"></canvas>
+        <canvas class="canvas2" width="700px" height="500px"></canvas>
+        <div id=shareScreenDiv class="shareScreenDiv"></div>
+    </div>
+
+    </div>
+    <script src="https://media.twiliocdn.com/sdk/js/video/releases/2.3.0/twilio-video.min.js "></script>
+    <script src="https://media.twiliocdn.com/sdk/js/conversations/releases/1.0.0/twilio-conversations.min.js "></script>
+    <script src="{{url_for( 'static', filename='index.js' )}} "></script>
+    <link rel="stylesheet " href="{{ url_for( 'static', filename='style.css' ) }} ">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js "></script>
+
+</body>
+
+</html>
